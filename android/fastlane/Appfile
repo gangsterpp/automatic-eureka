@@ -1,0 +1,2 @@
+json_key_file("android/secrets.json") # Path to the json secret file - Follow https://docs.fastlane.tools/actions/supply/#setup to get one
+package_name("com.example.vox_clients") # e.g. com.krausefx.app

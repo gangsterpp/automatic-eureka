@@ -1,0 +1,32 @@
+{
+"DEFAULT":{
+    "API_BASE_URL":"https://api.voxfordogs.tech/api",
+
+    "API_BASE_URLWS":"ws://localhost:5001/gateway",
+
+    "AUTH_BASE_URL_NML":"https://authorizer.voxfordogs.tech",
+
+    "API_TOKEN":"MTEzNDQ6Y1FKY3RTU0FSeVBrZjVKWjVOV1FqQQ==",
+
+    "API_DIGIT_URL":"https://direct.i-dgtl.ru/api/v1/verifier/send",
+
+    "API_DIGIT_URL_CHECK":"https://direct.i-dgtl.ru/api/v1/verifier/check"
+},
+"DEV":{
+    "API_BASE_URL":"https://api.voxfordogs.tech/api",
+
+    "API_BASE_URLWS":"ws://localhost:5001/gateway",
+
+    "AUTH_BASE_URL_NML":"https://authorizer.voxfordogs.tech"
+},
+
+"PROD":{
+    "API_BASE_URL":"https://api.voxfordogs.tech/api",
+
+    "API_BASE_URLWS":"ws://localhost:5001/gateway",
+
+    "AUTH_BASE_URL_NML":"https://authorizer.voxfordogs.tech"
+}
+
+
+}
