@@ -29,6 +29,12 @@ class _WalkBodyState extends ConsumerState<WalkBody> {
   late final _showPopup = ValueNotifier(false);
   final bubbleDataStream = StreamController<BubbleData>.broadcast();
 
+  static const _descriptions = [
+    'Длительность выгула — 60 минут. Если требуется больше времени, то можно сообщить об этом оператору, и он все устроит!',
+    'Каждый наш выгульщик — это ответственный, заботливый и опытный любитель собак, прошедший строгий отбор и обучение в нашей онлайн-академии.',
+    'У каждого нашего выгульщика есть страховочная амуниция, которая минимизирует риск сбегания собаки.',
+  ];
+
   YandexMapController? _controller;
 
   geo.Position? _position;
@@ -140,7 +146,12 @@ class _WalkBodyState extends ConsumerState<WalkBody> {
                           padding: EdgeInsets.zero,
                           child: IntrinsicHeight(
                             child: Row(
-                              children: List.generate(10, (index) {
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisSize: MainAxisSize.max,
+                              children: List.generate(_descriptions.length, (
+                                index,
+                              ) {
                                 return Padding(
                                   padding: const EdgeInsets.only(right: 12),
                                   child: StatefulBuilder(
@@ -149,13 +160,12 @@ class _WalkBodyState extends ConsumerState<WalkBody> {
                                         constraints: BoxConstraints(
                                           maxWidth: constraints.maxWidth * 0.89,
                                           minWidth: constraints.maxWidth * 0.89,
+
+                                          minHeight: 94,
                                         ),
                                         child: AboutServicePopup(
                                           title: t.about_service_title,
-                                          description: t
-                                              .about_service_description_title(
-                                                duration: 60,
-                                              ),
+                                          description: _descriptions[index],
                                           onClose:
                                               inProc
                                                   ? null

@@ -25,12 +25,14 @@ class AboutServicePopup extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
+          spacing: 8,
           children: [
             Flexible(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 mainAxisSize: MainAxisSize.max,
+                spacing: 0,
                 children: [
                   Text(
                     title,
@@ -38,12 +40,19 @@ class AboutServicePopup extends StatelessWidget {
                       color: AppColors.grayScale950,
                     ),
                   ),
-                  TextButton(
-                    onPressed: onClose,
-                    child: Text(
-                      t.hide_all_button_title,
-                      style: AppTextStyles.s12h20w600$ButtonS.copyWith(
-                        color: AppColors.primary500,
+                  Material(
+                    color: Colors.transparent,
+                    clipBehavior: Clip.hardEdge,
+                    child: InkWell(
+                      onTap: onClose,
+
+                      child: Ink(
+                        child: Text(
+                          t.hide_all_button_title,
+                          style: AppTextStyles.s12h20w600$ButtonS.copyWith(
+                            color: AppColors.primary500,
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -55,9 +64,10 @@ class AboutServicePopup extends StatelessWidget {
                 description,
                 style: AppTextStyles.s12h16w400$Label.copyWith(
                   color: AppColors.gray600,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 overflow: TextOverflow.ellipsis,
-                maxLines: 10,
+                maxLines: 3,
               ),
             ),
           ],
