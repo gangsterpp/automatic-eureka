@@ -1,0 +1,46 @@
+name: vox_uikit
+description: A reusable UI Kit for the VOX Walkers project.
+version: 0.0.1
+publish_to: none
+
+environment:
+  sdk: ">=3.2.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_svg: ^2.0.17
+  cached_network_image: ^3.4.1
+  shimmer: 3.0.0
+  photo_manager: 3.6.4
+  intl: 0.20.2
+  camera: 0.11.1
+  permission_handler: 12.0.0+1
+  video_player: 2.9.5
+  video_thumbnail: 0.5.6
+  native_device_orientation: 2.0.3
+
+dev_dependencies:
+  flutter_lints: ^5.0.0
+
+flutter:
+  assets:
+    - assets/icons/
+    - assets/fonts/
+
+  fonts:
+    - family: AppIcons
+      fonts:
+        - asset: assets/fonts/AppIcons.ttf
+    - family: Lato
+      fonts:
+        - asset: assets/fonts/Lato-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Lato-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Lato-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Lato-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Lato-ExtraBold.ttf
+          weight: 800

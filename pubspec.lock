@@ -1597,15 +1597,15 @@ packages:
   vox_ui_kit:
     dependency: "direct main"
     description:
-      path: "/Volumes/External/projects/ui_kit"
-      relative: false
+      path: ui_kit
+      relative: true
     source: path
     version: "0.0.15"
   vox_uikit:
     dependency: "direct main"
     description:
-      path: "/Volumes/External/test_projects/vox_uikit"
-      relative: false
+      path: vox_uikit
+      relative: true
     source: path
     version: "0.0.1"
   watcher:

@@ -48,9 +48,9 @@ dependencies:
   geolocator: 14.0.0
   analyzer: 7.3.0
   vox_ui_kit:
-    path: /Volumes/External/projects/ui_kit
+    path: ./ui_kit
   vox_uikit:
-    path: /Volumes/External/test_projects/vox_uikit 
+    path: ./vox_uikit 
   package_info_plus: ^8.3.0
 
 

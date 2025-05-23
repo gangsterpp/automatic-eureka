@@ -1,0 +1,6 @@
+input_directory: assets/i18n
+output_directory: lib/gen
+output_file_name: translations.g.dart
+fallback_locale: ru
+input_file_pattern: .json
+base_locale: ru
