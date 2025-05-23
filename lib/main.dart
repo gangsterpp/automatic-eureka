@@ -13,9 +13,19 @@ void main() {
   runZonedGuarded(
     () {
       bootstrap(
-        map: const YandexBootstrap(apiKey: String.fromEnvironment('MAP_API_KEY'), locale: 'ru_RU'),
+        map: const YandexBootstrap(
+          apiKey: String.fromEnvironment('MAP_API_KEY'),
+          locale: 'ru_RU',
+        ),
         (container) {
-          runApp(TranslationProvider(child: UncontrolledProviderScope(container: container, child: const CustomersApp())));
+          runApp(
+            TranslationProvider(
+              child: UncontrolledProviderScope(
+                container: container,
+                child: const CustomersApp(),
+              ),
+            ),
+          );
         },
         (container, error) {
           debugPrint('Ошибка при инициализации: $error');

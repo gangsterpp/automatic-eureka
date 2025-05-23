@@ -8,7 +8,7 @@ class RadioButton extends StatelessWidget {
   final String groupValue;
   final ValueChanged<String?> onChanged;
 
-  const RadioButton({Key? key, required this.value, required this.groupValue, required this.onChanged}) : super(key: key);
+  const RadioButton({super.key, required this.value, required this.groupValue, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {

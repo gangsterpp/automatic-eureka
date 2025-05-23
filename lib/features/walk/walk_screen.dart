@@ -22,6 +22,9 @@ class _WalkScreenState extends State<WalkScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const AnnotatedRegion<SystemUiOverlayStyle>(value: SystemUiOverlayStyle.dark, child: Scaffold(body: WalkBody()));
+    return const AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle.dark,
+      child: Scaffold(body: WalkBody()),
+    );
   }
 }

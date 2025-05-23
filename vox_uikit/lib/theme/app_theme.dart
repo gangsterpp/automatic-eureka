@@ -29,7 +29,7 @@ class AppTheme {
         showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.transparent,
-        // backgroundColor: AppColors.background,
+        // backgroundColor: AppColors.background
         selectedItemColor: AppColors.primary600,
         unselectedItemColor: AppColors.grayScale500,
         selectedLabelStyle: TextStyle(

@@ -22,7 +22,7 @@ class AddresesScreen extends ConsumerWidget {
   @override
   Widget build(context, ref) {
     return Scaffold(
-      appBar: CustomAppBar(title: t.my_addresses_title),
+      appBar: const CustomAppBar(title: 'Адреса'),
       body: switch (ref.watch(addressNotifierProvider).value) {
         AddressLoading _ => const Center(
           child: CircularProgressIndicator.adaptive(),

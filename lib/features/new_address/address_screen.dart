@@ -321,7 +321,7 @@ class _NewAddressScreenState extends ConsumerState<AddressScreen> {
                             }
 
                             return AppAccentButton.primary(
-                              text: t.add_address_title,
+                              text: t.add_address_button_title,
                               isDisabled: isDisabled,
                               isLoading: saveLoadingProgress.value,
                               onTapped: () {

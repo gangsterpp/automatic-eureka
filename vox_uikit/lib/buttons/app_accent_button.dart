@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vox_uikit/main.dart';
 
-enum AppAccentButtonType { primary, secondary, tertiary, warning }
+enum AppAccentButtonType { primary, secondary, tertiary, warning, white }
 
 class AppAccentButton extends StatelessWidget {
   const AppAccentButton({
@@ -50,6 +50,15 @@ class AppAccentButton extends StatelessWidget {
   })  : buttonType = AppAccentButtonType.warning,
         trailing = null;
 
+  const AppAccentButton.white({
+    required this.text,
+    this.isLoading = false,
+    this.isDisabled = false,
+    required this.onTapped,
+    super.key,
+  })  : buttonType = AppAccentButtonType.white,
+        trailing = null;
+
   final AppAccentButtonType buttonType;
   final String text;
   final VoidCallback? onTapped;
@@ -64,9 +73,7 @@ class AppAccentButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textStyle = AppTextStyles.s14h20w600$ButtonM.copyWith(
-      color: (onTapped == null) || isDisabled
-          ? _getDisabledTextColor()
-          : _getInitialActiveTextColor(),
+      color: (onTapped == null) || isDisabled ? _getDisabledTextColor() : _getInitialActiveTextColor(),
     );
 
     return TextButton(
@@ -142,6 +149,7 @@ class AppAccentButton extends StatelessWidget {
         AppAccentButtonType.secondary => AppColors.primary600,
         AppAccentButtonType.tertiary => AppColors.gray900,
         AppAccentButtonType.warning => AppColors.gray900,
+        AppAccentButtonType.white => AppColors.gray900,
       };
 
   Color _getDisabledTextColor() => switch (buttonType) {
@@ -149,6 +157,7 @@ class AppAccentButton extends StatelessWidget {
         AppAccentButtonType.secondary => AppColors.primary300,
         AppAccentButtonType.tertiary => AppColors.gray200,
         AppAccentButtonType.warning => AppColors.gray200,
+        AppAccentButtonType.white => AppColors.gray200,
       };
 
   Color _getInitialLoadingBackgroundColor() => switch (buttonType) {
@@ -156,6 +165,7 @@ class AppAccentButton extends StatelessWidget {
         AppAccentButtonType.secondary => AppColors.primary100,
         AppAccentButtonType.tertiary => AppColors.gray100,
         AppAccentButtonType.warning => AppColors.redLight500,
+        AppAccentButtonType.white => AppColors.white,
       };
 
   Color _getActiveBackgroundColor() => switch (buttonType) {
@@ -163,6 +173,7 @@ class AppAccentButton extends StatelessWidget {
         AppAccentButtonType.secondary => AppColors.primary200,
         AppAccentButtonType.tertiary => AppColors.gray150,
         AppAccentButtonType.warning => AppColors.redLight600,
+        AppAccentButtonType.white => AppColors.gray100,
       };
 
   Color _getDisabledBackgroundColor() => switch (buttonType) {
@@ -170,5 +181,6 @@ class AppAccentButton extends StatelessWidget {
         AppAccentButtonType.secondary => AppColors.primary100,
         AppAccentButtonType.tertiary => AppColors.gray50,
         AppAccentButtonType.warning => AppColors.redLight400,
+        AppAccentButtonType.white => AppColors.white,
       };
 }

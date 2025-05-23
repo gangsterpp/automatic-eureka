@@ -2,14 +2,13 @@ import 'dart:async';
 
 import 'package:VOX/features/walk/walk_modal_body.dart';
 import 'package:VOX/providers/app_storage.dart';
+import 'package:VOX/widgets/about_service_popup.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:geolocator/geolocator.dart' as geo;
-import 'package:vox_ui_kit/utils/calculator.dart' as calculator;
 import 'package:vox_ui_kit/vox_ui_kit.dart';
-import 'package:vox_ui_kit/widgets/cards/about_service_popup.dart';
 import 'package:vox_ui_kit/widgets/map/marker_bubble.dart';
 import 'package:vox_ui_kit/widgets/map/place_mark_option.dart';
 import 'package:vox_uikit/helpers/app_icons.dart';
@@ -67,19 +66,6 @@ class _WalkBodyState extends ConsumerState<WalkBody> {
         tilt: 30.0,
         azimuth: 0.0,
       ),
-    );
-    if (!mounted) return;
-    final distance =
-        calculator
-            .calculateDistanceInKM(
-              lat1: 59.94,
-              lon1: 30.31,
-              lat2: _position!.latitude,
-              lon2: _position!.longitude,
-            )
-            .toInt();
-    bubbleDataStream.add(
-      BubbleData(distanceValue: '$distance км.', nameValue: 'Дарья'),
     );
   }
 
@@ -144,45 +130,47 @@ class _WalkBodyState extends ConsumerState<WalkBody> {
               child: SafeArea(
                 minimum: const EdgeInsets.only(top: 8),
                 child: LayoutBuilder(
-                  builder: (_, c) {
+                  builder: (_, constraints) {
                     return ValueListenableBuilder(
                       valueListenable: _showPopup,
-                      child: SizedBox(
-                        width: c.maxWidth,
-                        height: 100,
-                        child: ListView.separated(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 16, top: 8),
+                        child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
-                          padding: const EdgeInsets.only(left: 16, right: 8),
-                          itemCount: 10,
-                          itemBuilder: (_, _) {
-                            return ConstrainedBox(
-                              constraints: BoxConstraints(
-                                maxWidth: c.maxWidth * 0.89,
-                                minWidth: c.maxWidth * 0.89,
-                              ),
-                              child: StatefulBuilder(
-                                builder: (c, state) {
-                                  return AboutServicePopup(
-                                    title: t.about_service_title,
-                                    description: t
-                                        .about_service_description_title(
-                                          duration: 60,
+                          padding: EdgeInsets.zero,
+                          child: IntrinsicHeight(
+                            child: Row(
+                              children: List.generate(10, (index) {
+                                return Padding(
+                                  padding: const EdgeInsets.only(right: 12),
+                                  child: StatefulBuilder(
+                                    builder: (c, state) {
+                                      return ConstrainedBox(
+                                        constraints: BoxConstraints(
+                                          maxWidth: constraints.maxWidth * 0.89,
+                                          minWidth: constraints.maxWidth * 0.89,
                                         ),
-                                    onClose:
-                                        inProc
-                                            ? null
-                                            : () {
-                                              state(() => inProc = true);
-                                              _onClosePopup();
-                                            },
-                                  );
-                                },
-                              ),
-                            );
-                          },
-                          separatorBuilder: (BuildContext context, int index) {
-                            return const SizedBox(width: 12);
-                          },
+                                        child: AboutServicePopup(
+                                          title: t.about_service_title,
+                                          description: t
+                                              .about_service_description_title(
+                                                duration: 60,
+                                              ),
+                                          onClose:
+                                              inProc
+                                                  ? null
+                                                  : () {
+                                                    state(() => inProc = true);
+                                                    _onClosePopup();
+                                                  },
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                );
+                              }),
+                            ),
+                          ),
                         ),
                       ),
                       builder: (context, value, child) {

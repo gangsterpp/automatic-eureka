@@ -34,7 +34,7 @@ class YandexMapController implements AppMapController<mapkit.MapWindow> {
         azimuth: position.azimuth,
         tilt: position.tilt,
       ),
-      const mapkit.Animation(mapkit.AnimationType.Smooth, duration: 1),
+      const mapkit.Animation(mapkit.AnimationType.Smooth, duration: 0.4),
     );
   }
 

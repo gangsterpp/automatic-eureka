@@ -219,6 +219,21 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         size: 16,
                       ),
                     ),
+                    const SizedBox(height: 8),
+                    ListTile(
+                      title: const Text('Настройки'),
+                      onTap: () {
+                        context.pushRoute(const InformationRoute());
+                      },
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                      ),
+                      trailing: const Icon(
+                        CupertinoIcons.chevron_right,
+                        color: Color(0xFF81899C),
+                        size: 16,
+                      ),
+                    ),
                     Builder(
                       builder:
                           (c) => ListTile(

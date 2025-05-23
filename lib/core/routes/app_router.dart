@@ -75,6 +75,7 @@ class AppRouter extends RootStackRouter {
     AutoRoute(page: AddresesRoute.page, path: '/my-addreses'),
     AutoRoute(page: AddressRoute.page, path: '/address'),
     AutoRoute(page: WalkRoute.page, path: '/walk'),
+    AutoRoute(page: SettingsRoute.page, path: '/settings'),
   ];
 }
 

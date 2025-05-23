@@ -8,8 +8,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:vox_ui_kit/core/constants/constants.dart';
 import 'package:vox_ui_kit/core/theme/colors.dart';
 import 'package:vox_ui_kit/gen/translations.g.dart';
-import 'package:vox_ui_kit/widgets/buttons/filled/primary_filled_button.dart';
-import 'package:vox_ui_kit/widgets/buttons/filled/secondary_filled_button.dart';
+import 'package:vox_uikit/main.dart';
 
 import '../../../domain/models/onboarding_model/onboarding_model.dart';
 import '../../../domain/models/onboarding_model/onboarding_model_mock.dart';
@@ -44,7 +43,11 @@ class _OnboardingPageViewState extends State<OnboardingPageView> {
 
   bool _isLastPage = false;
 
-  final _dotDecoration = DotDecoration(height: 2, width: 32, borderRadius: BorderRadius.circular(DefaultSizes.xSmall));
+  final _dotDecoration = DotDecoration(
+    height: 2,
+    width: 32,
+    borderRadius: BorderRadius.circular(DefaultSizes.xSmall),
+  );
 
   @override
   void initState() {
@@ -81,7 +84,11 @@ class _OnboardingPageViewState extends State<OnboardingPageView> {
         itemBuilder: (BuildContext context, int index) {
           final item = widget.data[index];
 
-          return OnboardingCard(title: item.title, description: item.description, imageUrl: item.imageUrl);
+          return OnboardingCard(
+            title: item.title,
+            description: item.description,
+            imageUrl: item.imageUrl,
+          );
         },
         itemCount: _itemCount,
       ),
@@ -90,8 +97,15 @@ class _OnboardingPageViewState extends State<OnboardingPageView> {
           padding: const EdgeInsets.all(DefaultSizes.large),
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             spacing: DefaultSizes.large,
-            children: [_buildPageIndicator(), ContinueButton(isLastPage: _isLastPage, pageController: _pageController)],
+            children: [
+              Center(child: _buildPageIndicator()),
+              ContinueButton(
+                isLastPage: _isLastPage,
+                pageController: _pageController,
+              ),
+            ],
           ),
         ),
       ),
@@ -112,7 +126,9 @@ class _OnboardingPageViewState extends State<OnboardingPageView> {
           return ThemeColors.whiteA70001;
         },
         dotDecoration: _dotDecoration,
-        activeDotDecoration: _dotDecoration.copyWith(color: ThemeColors.deepPurpleA20002),
+        activeDotDecoration: _dotDecoration.copyWith(
+          color: ThemeColors.deepPurpleA20002,
+        ),
       ),
     );
   }
@@ -121,7 +137,11 @@ class _OnboardingPageViewState extends State<OnboardingPageView> {
 class ContinueButton extends ConsumerWidget {
   final bool isLastPage;
   final PageController pageController;
-  const ContinueButton({super.key, required this.isLastPage, required this.pageController});
+  const ContinueButton({
+    super.key,
+    required this.isLastPage,
+    required this.pageController,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -129,18 +149,16 @@ class ContinueButton extends ConsumerWidget {
       duration: 300.ms,
       child:
           isLastPage
-              ? PrimaryFilledButton(
-                width: double.infinity,
-                title: t.start_title,
-                onPressed: () {
+              ? AppAccentButton.primary(
+                text: t.start_title,
+                onTapped: () {
                   ref.read(appStorageProvider).setFirstEnter();
                   context.replaceRoute(const SignInRoute());
                 },
               )
-              : SecondaryFilledButton(
-                title: t.continue_title,
-                width: double.infinity,
-                onPressed: () {
+              : AppAccentButton.white(
+                text: 'Продолжить',
+                onTapped: () {
                   pageController.nextPage(duration: 300.ms, curve: Curves.ease);
                 },
               ),

@@ -59,7 +59,7 @@ void main() {
               mockVerificationService,
             ),
           ],
-          child: MaterialApp(home: SignInScreen()),
+          child: const MaterialApp(home: SignInScreen()),
         ),
       );
 

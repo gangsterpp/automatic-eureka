@@ -149,7 +149,10 @@ class _ServicesScreenState extends State<ServicesScreen> {
                   const SafeArea(
                     child: Align(
                       alignment: Alignment.topRight,
-                      child: NotificationIcon(),
+                      child: Padding(
+                        padding: EdgeInsets.only(top: 6),
+                        child: NotificationIcon(),
+                      ),
                     ),
                   ),
                 ],

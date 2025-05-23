@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vox_ui_kit/gen/translations.g.dart';
+import '../../../gen/translations.g.dart';
 
 class ServiceCardText extends StatelessWidget {
   final String title;
