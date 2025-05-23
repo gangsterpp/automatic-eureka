@@ -82,7 +82,7 @@ class _AppTextFieldState extends State<AppTextField> {
       children: [
         if (widget.labelText != null) ...[
           Text(widget.labelText!, style: const TextStyle(fontWeight: FontWeight.w400, fontSize: 12, color: Color(0xFF0B0C0E))),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
         ],
 
         ListenableBuilder(

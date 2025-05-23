@@ -68,7 +68,7 @@ class _PhoneNumberInputState extends ConsumerState<PhoneNumberInput> {
     final country = ref.watch(currentCountryProvider);
 
     return Row(
-      children: [
+      children: <Widget>[
         CountryCodePicker(
           countryCodeWidth: widget.countryCodeWidth,
           selectedCountryCode: country.code,

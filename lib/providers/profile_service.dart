@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:VOX/domain/profile.dart';
 import 'package:VOX/domain/profile_service.dart';
 import 'package:VOX/providers/app_storage.dart';
+import 'package:VOX/widgets/profile/gender_selection.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -29,7 +31,9 @@ class ProfileNotifier extends _$ProfileNotifier {
       state = const AsyncData(ProfileLoading());
 
       await ref.read(profileServiceProvider).updateProfile(newProfile);
-      await Future.delayed(const Duration(seconds: 1));
+      // await Future.delayed(const Duration(seconds: 1));
+
+      log(newProfile.toJson().toString(), name: 'Profile data');
 
       state = AsyncData(ProfileLoaded(newProfile));
     } catch (error, _) {
@@ -47,6 +51,17 @@ class ProfileNotifier extends _$ProfileNotifier {
       state = const AsyncData(ProfileDeleted());
     } catch (error, _) {
       state = AsyncData(ProfileError(error.toString()));
+    }
+  }
+
+  Future<void> changeGender(UserGender selectedGender) async {
+    final PorfileState? currentState = state.value;
+    if (currentState is ProfileLoaded) {
+      final Profile currentProfile = currentState.profile;
+      final Profile updatedProfile = currentProfile.copyWith(
+        userGender: selectedGender,
+      );
+      await updateProfile(updatedProfile);
     }
   }
 }

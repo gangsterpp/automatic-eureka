@@ -178,6 +178,7 @@ class _DropdownTextFieldWidgetState extends State<DropdownTextFieldWidget> {
                 width: 20,
                 height: 20,
                 fit: BoxFit.contain,
+                package: 'vox_ui_kit',
               ),
             ),
           ),

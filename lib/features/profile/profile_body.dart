@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:VOX/core/utils/format_phone.dart';
 import 'package:VOX/domain/city.dart';
 import 'package:VOX/domain/country.dart';
@@ -8,17 +6,15 @@ import 'package:VOX/providers/authorize.dart';
 import 'package:VOX/providers/city_provider.dart';
 import 'package:VOX/providers/current_country.dart';
 import 'package:VOX/providers/profile_service.dart';
-import 'package:VOX/widgets/adaptive_dialog.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:VOX/widgets/profile/city_selection.dart';
+import 'package:VOX/widgets/profile/gender_selection.dart';
+import 'package:VOX/widgets/profile/local_circle_avatar.dart';
+import 'package:VOX/widgets/profile/phone_number_selection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:vox_ui_kit/gen/assets.gen.dart';
-import 'package:vox_ui_kit/gen/translations.g.dart';
-import 'package:vox_ui_kit/theme/app_button_theme.dart';
-import 'package:vox_ui_kit/widgets/dropdowns/app_dropdown.dart';
-import 'package:vox_ui_kit/widgets/fields/app_text_field.dart';
+import 'package:vox_uikit/buttons/app_accent_button.dart';
+import 'package:vox_uikit/inputs/text_field_widget.dart';
 
 class ProfileBody extends ConsumerStatefulWidget {
   const ProfileBody({super.key});
@@ -70,6 +66,7 @@ class _ProfileBodyState extends ConsumerState<ProfileBody> {
 
   final _tooltipController = OverlayPortalController();
   final link = LayerLink();
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -118,12 +115,13 @@ class _ProfileBodyState extends ConsumerState<ProfileBody> {
 
   @override
   Widget build(BuildContext context) {
-    final buttonThemes = Theme.of(context).extension<AppButtonTheme>();
     ref.listen(currentCityProvider, (_, next) {
       cityController.value = next;
-      cityTextController.text = cityController.value?.name ?? '-';
+      cityTextController.text = cityController.value?.name ?? '';
     });
-    final country = ref.watch(currentCountryProvider);
+
+    final Country country = ref.watch(currentCountryProvider);
+
     ref.listen(profileNotifierProvider, (prev, next) {
       switch (next.value) {
         case ProfileError error:
@@ -151,190 +149,87 @@ class _ProfileBodyState extends ConsumerState<ProfileBody> {
 
     return ListenableBuilder(
       listenable: loadingController,
-      builder: (_, _) {
+      builder: (_, __) {
         return Padding(
-          padding: const EdgeInsets.only(left: 16, top: 20, right: 16),
-          child: CustomScrollView(
-            slivers: [
-              SliverPadding(
-                padding: const EdgeInsets.only(bottom: 20),
-                sliver: SliverToBoxAdapter(
-                  child: ListenableBuilder(
-                    listenable: urlTextController,
-                    builder: (_, _) {
-                      final Widget child;
-
-                      if (urlTextController.text.isEmpty) {
-                        child = InkWell(
-                          onTap:
-                              loadingController.value
-                                  ? null
-                                  : () async {
-                                    final imagePicker = ImagePicker();
-                                    final photo = await imagePicker.pickImage(
-                                      source: ImageSource.gallery,
-                                    );
-                                    if (photo?.path == null) return;
-                                    urlTextController.text = photo!.path;
-                                  },
-                          child: SizedBox(
-                            width: 80,
-                            height: 80,
-                            child: CircleAvatar(
-                              minRadius: 40,
-                              maxRadius: 80,
-                              backgroundColor: const Color(0xFFE2E4E9),
-                              child: LayoutBuilder(
-                                builder: (_, c) {
-                                  return Stack(
-                                    children: [
-                                      Center(
-                                        child: Assets.icons.photo.image(
-                                          width: 28,
-                                          height: 28,
-                                          package: 'vox_ui_kit',
-                                        ),
-                                      ),
-                                      Align(
-                                        alignment: const Alignment(0.0, 1.3),
-                                        child: SizedBox(
-                                          width: 24,
-                                          height: 24,
-                                          child: Material(
-                                            borderRadius: BorderRadius.circular(
-                                              8,
-                                            ),
-                                            color: const Color(0xFF914DFF),
-                                            clipBehavior: Clip.hardEdge,
-                                            child: const Icon(
-                                              CupertinoIcons.add,
-                                              size: 18,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-                        );
-                      } else {
-                        child = CircleAvatar(
-                          minRadius: 40,
-                          backgroundImage:
-                              Image.file(
-                                File(urlTextController.text),
-                                fit: BoxFit.cover,
-                              ).image,
-                        );
-                      }
-                      return child;
-                    },
-                  ),
-                ),
-              ),
-
-              SliverPadding(
-                padding: const EdgeInsets.only(bottom: 16),
-                sliver: SliverToBoxAdapter(
-                  child: AppTextField(
-                    enabled: !loadingController.value,
-                    labelText: t.name_field_label,
-                    hintText: 'Петр',
-                    controller: nameTextController,
-                    validator: (value) {
-                      isNameValid.value = !(value == null || value.isEmpty);
-                      if (!isNameValid.value) {
-                        return t.field_required_error;
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.only(bottom: 16),
-                sliver: SliverToBoxAdapter(
-                  child: AppTextField(
-                    enabled: !loadingController.value,
-                    keyboardType: TextInputType.phone,
-                    labelText: t.phone_field_label,
-
-                    inputFormatters: switch (country) {
-                      RU _ => [russiaFormatter],
-
-                      KZ _ => [kazakhstanMaskFormatter],
-
-                      BY _ => [belarusMaskFormatter],
-
-                      AM _ => [armeniaMaskFormatter],
-
-                      KG _ => [kyrgyzstanMaskFormatter],
-                    },
-
-                    hintText: switch (country) {
-                      RU _ => '+7 (999) 999-99-99',
-
-                      KZ _ => '+7 (999) 999-99-99',
-
-                      BY _ => '+375 (99) 999-99-99',
-
-                      AM _ => '+374 (99) 999-99-99',
-
-                      KG _ => '+996 (99) 999-99-99',
-                    },
-                    controller: phoneTextController,
-                    validator: (value) {
-                      isPhoneValid.value = !(value == null || value.isEmpty);
-                      if (!isPhoneValid.value) {
-                        return t.field_required_error;
-                      }
-                      return null;
-                    },
-                  ),
-                ),
-              ),
-              SliverPadding(
-                padding: const EdgeInsets.only(bottom: 16),
-                sliver: SliverToBoxAdapter(
-                  child: AppDropdown(
-                    controller: cityTextController,
-                    onTap: () => AdaptiveDialog.showModalCountries(context),
-
-                    labelText: t.city_label,
-                  ),
-                ),
-              ),
-              SliverFillRemaining(
-                hasScrollBody: false,
-                fillOverscroll: true,
-                child: SafeArea(
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      spacing: 16,
-                      children: [
-                        ElevatedButton(
-                          style:
-                              buttonThemes?.primaryElevatedButtonTheme?.style,
-                          onPressed: () {},
-                          child: Text(t.delete_account_title),
-                        ),
-
-                        ElevatedButton(
-                          style:
-                              buttonThemes?.primaryElevatedButtonTheme?.style,
-                          onPressed: () {},
-                          child: Text(t.save_button_title),
-                        ),
-                      ],
+          padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
+          child: Column(
+            children: [
+              Expanded(
+                child: CustomScrollView(
+                  slivers: <Widget>[
+                    SliverPadding(
+                      padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                      sliver: SliverToBoxAdapter(
+                        child: LocalCircleAvatar(onAvatarTap: () {}),
+                      ),
                     ),
+                    SliverPadding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      sliver: SliverToBoxAdapter(
+                        child: TextFieldWidget(
+                          hint: 'Имя',
+                          title: 'Имя',
+                          controller: nameTextController,
+                        ),
+                      ),
+                    ),
+                    SliverPadding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      sliver: SliverToBoxAdapter(
+                        child: GenderSelector(
+                          selectedGender:
+                              ref
+                                  .watch(profileNotifierProvider)
+                                  .value
+                                  ?.value
+                                  ?.userGender ??
+                              UserGender.female,
+                          onChanged:
+                              ref
+                                  .read(profileNotifierProvider.notifier)
+                                  .changeGender,
+                        ),
+                      ),
+                    ),
+                    const SliverPadding(
+                      padding: EdgeInsets.only(bottom: 16),
+                      sliver: SliverToBoxAdapter(child: PhoneNumberSelection()),
+                    ),
+                    SliverPadding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      sliver: SliverToBoxAdapter(
+                        child: CitySelection(
+                          cityTextController: cityTextController,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
+                  child: AppAccentButton.primary(
+                    isDisabled: isDisabled,
+                    text: 'Сохранить',
+                    onTapped: () {
+                      ref
+                          .read(profileNotifierProvider.notifier)
+                          .updateProfile(
+                            Profile(
+                              urlPath: '',
+                              name: nameTextController.text,
+                              phone: phoneTextController.text,
+                              city: cityTextController.text,
+                              userGender:
+                                  ref
+                                      .watch(profileNotifierProvider)
+                                      .value
+                                      ?.value
+                                      ?.userGender,
+                            ),
+                          );
+                    },
                   ),
                 ),
               ),
@@ -343,5 +238,47 @@ class _ProfileBodyState extends ConsumerState<ProfileBody> {
         );
       },
     );
+
+    //       SliverPadding(
+    //         padding: const EdgeInsets.only(bottom: 16),
+    //         sliver: SliverToBoxAdapter(
+    //           child: AppTextField(
+    //             enabled: !loadingController.value,
+    //             keyboardType: TextInputType.phone,
+    //             labelText: t.phone_field_label,
+    //             inputFormatters: switch (country) {
+    //               RU _ => [russiaFormatter],
+
+    //               KZ _ => [kazakhstanMaskFormatter],
+
+    //               BY _ => [belarusMaskFormatter],
+
+    //               AM _ => [armeniaMaskFormatter],
+
+    //               KG _ => [kyrgyzstanMaskFormatter],
+    //             },
+
+    //             hintText: switch (country) {
+    //               RU _ => '+7 (999) 999-99-99',
+
+    //               KZ _ => '+7 (999) 999-99-99',
+
+    //               BY _ => '+375 (99) 999-99-99',
+
+    //               AM _ => '+374 (99) 999-99-99',
+
+    //               KG _ => '+996 (99) 999-99-99',
+    //             },
+    //             controller: phoneTextController,
+    //             validator: (value) {
+    //               isPhoneValid.value = !(value == null || value.isEmpty);
+    //               if (!isPhoneValid.value) {
+    //                 return t.field_required_error;
+    //               }
+    //               return null;
+    //             },
+    //           ),
+    //         ),
+    //       ),
   }
 }

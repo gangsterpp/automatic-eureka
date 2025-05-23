@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:VOX/domain/profile.dart';
 import 'package:VOX/providers/app_storage.dart';
+import 'package:VOX/widgets/profile/gender_selection.dart';
 
 abstract interface class ProfileService {
   Future<Profile> fetchProfile();
@@ -19,7 +20,14 @@ class MockProfileService implements ProfileService {
     if (response != null) {
       return Profile.fromJson(jsonDecode(response));
     }
-    return const Profile(name: '-', phone: '-', city: 'Москва');
+
+    /// TODO: Check;
+    return const Profile(
+      name: 'Екатерина',
+      phone: '-',
+      city: 'Москва',
+      userGender: UserGender.female,
+    );
   }
 
   @override
