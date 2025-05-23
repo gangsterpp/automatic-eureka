@@ -10,6 +10,7 @@ class AddressInput extends StatefulWidget {
   final AddressModel? initialAddress;
   final AddressModel? Function()? onSpecifyAddress;
   final VoidCallback onMoveToCurrentLocation;
+  final ValueNotifier<AddressModel?>? addressNotifier;
 
   /// [isValidAddress] - если определена, поведение геттера [isValid] будет определяться её результатом
   final bool Function(AddressModel value)? isValidAddress;
@@ -21,6 +22,7 @@ class AddressInput extends StatefulWidget {
     required this.onSpecifyAddress,
     required this.isValidAddress,
     required this.onMoveToCurrentLocation,
+    this.addressNotifier,
   });
 
   @override
@@ -29,31 +31,14 @@ class AddressInput extends StatefulWidget {
 
 class _AddressInputState extends State<AddressInput> {
   final _widgetState = ValueNotifier<Set<AddressInputState>>({AddressInputState.initial});
-  late final _address = ValueNotifier<AddressModel>(
-    widget.initialAddress ??
-        AddressModel(
-          addressCity: '',
-          addressStreet: '',
-          addressHouse: '',
-          addressIntercom: '',
-          addressFloor: '',
-          addressFlat: '',
-          addressComment: '',
-          isValidAddress: widget.isValidAddress,
-        ),
-  );
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  late final _address = widget.addressNotifier ?? ValueNotifier<AddressModel?>(null);
 
   @override
   void didChangeDependencies() {
     if (widget.onTap == null) {
       _widgetState.value = {AddressInputState.disabled};
     } else {
-      if (_address.value.isValid) {
+      if (_address.value?.isValid == true) {
         _widgetState.value = {AddressInputState.filled};
       } else {
         _widgetState.value = {AddressInputState.initial};
@@ -67,7 +52,7 @@ class _AddressInputState extends State<AddressInput> {
     if (widget.onTap == null) {
       _widgetState.value = {AddressInputState.disabled};
     } else {
-      if (_address.value.isValid) {
+      if (_address.value?.isValid == true) {
         _widgetState.value = {AddressInputState.filled};
       } else {
         _widgetState.value = {AddressInputState.initial};
@@ -175,12 +160,17 @@ class _AddressInputState extends State<AddressInput> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             AppText(t.where_to_take_walker_title, type: AppTextType.w400s12h1P2),
-                            AppText(
-                              _address.value.isValid
-                                  ? t.address_example_title(address: _address.value.address)
-                                  : t.address_placeholder_title,
-                              type: AppTextType.w400s14h20,
-                              color: addressColor,
+                            ListenableBuilder(
+                              listenable: _address,
+                              builder: (_, __) {
+                                return AppText(
+                                  _address.value?.isValid == true
+                                      ? t.address_example_title(address: _address.value?.address ?? '')
+                                      : t.address_placeholder_title,
+                                  type: AppTextType.w400s14h20,
+                                  color: addressColor,
+                                );
+                              },
                             ),
                           ],
                         ),

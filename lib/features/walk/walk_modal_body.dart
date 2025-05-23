@@ -4,8 +4,7 @@ import 'package:vox_ui_kit/domain/address_model.dart';
 import 'package:vox_ui_kit/theme/app_text.dart';
 import 'package:vox_ui_kit/theme/colors.dart';
 import 'package:vox_ui_kit/widgets/fields/address_input.dart';
-import 'package:vox_uikit/buttons/app_accent_button.dart';
-import 'package:vox_uikit/theme/app_text_styles.dart';
+import 'package:vox_uikit/main.dart';
 
 class WalkModalBody extends StatefulWidget {
   final VoidCallback onMoveToCurrentLocation;
@@ -33,10 +32,6 @@ class _WalkModalBodyState extends State<WalkModalBody> {
     _selectedCardNotifier.dispose();
     _petNotifier.dispose();
     super.dispose();
-  }
-
-  void _handleCardTap(int index) {
-    _selectedCardNotifier.value = index;
   }
 
   @override
@@ -77,6 +72,7 @@ class _WalkModalBodyState extends State<WalkModalBody> {
                             ? const EdgeInsets.all(2)
                             : EdgeInsets.zero,
                     child: AddressInput(
+                      addressNotifier: _addressNotifier,
                       onMoveToCurrentLocation: widget.onMoveToCurrentLocation,
                       onSpecifyAddress: () {
                         _addressNotifier.value = const AddressModel(
@@ -92,17 +88,148 @@ class _WalkModalBodyState extends State<WalkModalBody> {
                         return _addressNotifier.value;
                       },
                       onTap: () {
-                        _addressNotifier.value = const AddressModel(
-                          addressCity: '',
-                          addressStreet: '',
-                          addressHouse: '',
-                          addressIntercom: '',
-                          addressFloor: '',
-                          addressFlat: '',
-                          addressComment: '',
-                          isValidAddress: null,
+                        showModalBottomSheet(
+                          context: context,
+                          builder:
+                              (context) => AppBottomSheetDecoration.fixed(
+                                leading: IconButton(
+                                  icon: const Icon(AppIcons.arrowLeft),
+                                  onPressed:
+                                      () => Navigator.of(context).maybePop(),
+                                ),
+                                title: 'Адрес',
+                                child: IntrinsicHeight(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Expanded(
+                                        child: Padding(
+                                          padding: const EdgeInsetsGeometry.all(
+                                            16,
+                                          ),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.stretch,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            mainAxisSize: MainAxisSize.min,
+                                            spacing: 16,
+                                            children: [
+                                              Flexible(
+                                                child: TextFieldWidget(
+                                                  title: 'Город',
+                                                  controller:
+                                                      TextEditingController()
+                                                        ..text =
+                                                            'Санкт-Петербург',
+                                                ),
+                                              ),
+                                              Flexible(
+                                                child: Row(
+                                                  spacing: 12,
+                                                  children: [
+                                                    Flexible(
+                                                      flex: 2,
+                                                      child: TextFieldWidget(
+                                                        title: 'Улица',
+                                                        controller:
+                                                            TextEditingController()
+                                                              ..text =
+                                                                  'Маяковского',
+                                                      ),
+                                                    ),
+                                                    Flexible(
+                                                      flex: 1,
+                                                      child: TextFieldWidget(
+                                                        title: 'Дом',
+                                                        controller:
+                                                            TextEditingController()
+                                                              ..text = '12',
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Flexible(
+                                                child: Row(
+                                                  spacing: 12,
+                                                  children: [
+                                                    Flexible(
+                                                      flex: 1,
+                                                      child: TextFieldWidget(
+                                                        title: 'Домофон',
+                                                        controller:
+                                                            TextEditingController(),
+                                                      ),
+                                                    ),
+                                                    Flexible(
+                                                      flex: 1,
+                                                      child: TextFieldWidget(
+                                                        title: 'Этаж',
+                                                        controller:
+                                                            TextEditingController(),
+                                                      ),
+                                                    ),
+                                                    Flexible(
+                                                      flex: 1,
+                                                      child: TextFieldWidget(
+                                                        title: 'Квартира',
+                                                        controller:
+                                                            TextEditingController(),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              Flexible(
+                                                child: TextFieldWidget(
+                                                  title:
+                                                      'Дополнительные комментарии',
+                                                  controller:
+                                                      TextEditingController(),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.bottomCenter,
+                                        child: SafeArea(
+                                          minimum: const EdgeInsets.only(
+                                            left: 16,
+                                            top: 16,
+                                            right: 16,
+                                            bottom: 4,
+                                          ),
+                                          child: AppAccentButton.primary(
+                                            text: 'Сохранить',
+                                            onTapped: () {
+                                              _addressNotifier
+                                                  .value = const AddressModel(
+                                                addressCity: 'Санкт-Петербург',
+                                                addressStreet: 'Маяковского',
+                                                addressHouse: '12',
+                                                addressIntercom: '123',
+                                                addressFloor: '',
+                                                addressFlat: '',
+                                                addressComment: '',
+                                                isValidAddress: null,
+                                              );
+                                              Navigator.of(context).maybePop();
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
                         );
-                        return _addressNotifier.value;
+                        return null;
                       },
                       isValidAddress: null,
                     ),
