@@ -64,6 +64,22 @@ class ProfileNotifier extends _$ProfileNotifier {
       await updateProfile(updatedProfile);
     }
   }
+
+  Future<void> onUsernameChanged(String typedUsername) async {
+    final PorfileState? currentState = state.value;
+    if (currentState is ProfileLoaded) {
+      final Profile currentProfile = currentState.profile;
+      currentProfile.copyWith(name: typedUsername);
+    }
+  }
+
+  Future<void> onPhoneNumberChanged(String typedPhoneNumber) async {
+    final PorfileState? currentState = state.value;
+    if (currentState is ProfileLoaded) {
+      final Profile currentProfile = currentState.profile;
+      currentProfile.copyWith(phone: typedPhoneNumber);
+    }
+  }
 }
 
 sealed class PorfileState {

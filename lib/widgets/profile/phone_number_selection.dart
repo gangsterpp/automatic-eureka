@@ -4,7 +4,16 @@ import 'package:vox_uikit/theme/app_colors.dart';
 import 'package:vox_uikit/theme/app_text_styles.dart';
 
 class PhoneNumberSelection extends StatelessWidget {
-  const PhoneNumberSelection({super.key});
+  final ValueChanged<String> onChanged;
+  final VoidCallback onCountryChanged;
+  final TextEditingController textEditingController;
+
+  const PhoneNumberSelection({
+    required this.onChanged,
+    required this.onCountryChanged,
+    required this.textEditingController,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +27,11 @@ class PhoneNumberSelection extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 6),
-        PhoneNumberInput(onChanged: (String text) {}),
+        PhoneNumberInput(
+          onChanged: onChanged,
+          onCountryChanged: onCountryChanged,
+          textEditingController: textEditingController,
+        ),
       ],
     );
   }

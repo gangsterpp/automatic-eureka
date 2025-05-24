@@ -1,4 +1,4 @@
-import 'package:VOX/core/utils/format_phone.dart';
+import 'dart:developer';
 import 'package:VOX/domain/city.dart';
 import 'package:VOX/domain/country.dart';
 import 'package:VOX/domain/profile.dart';
@@ -12,7 +12,6 @@ import 'package:VOX/widgets/profile/local_circle_avatar.dart';
 import 'package:VOX/widgets/profile/phone_number_selection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:vox_uikit/buttons/app_accent_button.dart';
 import 'package:vox_uikit/inputs/text_field_widget.dart';
 
@@ -42,27 +41,6 @@ class _ProfileBodyState extends ConsumerState<ProfileBody> {
   bool get isDisabled => !isNameValid.value || !isPhoneValid.value;
 
   Profile? profile;
-  final russiaFormatter = MaskTextInputFormatter(
-    mask: '+7 (###)-###-##-##',
-    filter: {"#": RegExp(r'[0-9]')},
-    type: MaskAutoCompletionType.lazy,
-  );
-  final armeniaMaskFormatter = MaskTextInputFormatter(
-    mask: '+374 (##)-##-##-##',
-    filter: {"#": RegExp(r'[0-9]')},
-  );
-  final belarusMaskFormatter = MaskTextInputFormatter(
-    mask: '+375 (##)-###-##-##',
-    filter: {"#": RegExp(r'[0-9]')},
-  );
-  final kazakhstanMaskFormatter = MaskTextInputFormatter(
-    mask: '+7 (###)-###-##-##',
-    filter: {"#": RegExp(r'[0-9]')},
-  );
-  final kyrgyzstanMaskFormatter = MaskTextInputFormatter(
-    mask: '+996 (###)-##-##-##',
-    filter: {"#": RegExp(r'[0-9]')},
-  );
 
   final _tooltipController = OverlayPortalController();
   final link = LayerLink();
@@ -86,16 +64,41 @@ class _ProfileBodyState extends ConsumerState<ProfileBody> {
     loadingController.value = false;
     cityTextController.text = value.profile.city ?? 'Москва';
     nameTextController.text = value.profile.name ?? '';
-    phoneTextController.text =
-        formatPhone(
-          value.profile.phone ?? '',
-          ref.read(currentCountryProvider),
-        ) ??
-        '';
+    final String prefix = ref.read(currentCountryProvider).dialCode;
+    final String phoneNumber =
+        ref.read(profileNotifierProvider).value?.value?.phone ?? '';
+    phoneTextController.text = '$prefix $phoneNumber';
     isPhoneValid.value = phoneTextController.text.isNotEmpty;
     isNameValid.value = nameTextController.text.isNotEmpty;
     urlTextController.text = value.profile.urlPath ?? '';
     profile = value.profile;
+  }
+
+  void updatePhoneNumberController() {
+    phoneTextController.clear();
+    final String prefix = ref.read(currentCountryProvider).dialCode;
+    phoneTextController.text = prefix;
+  }
+
+  String getFormattedPhoneNumberForSave({
+    required TextEditingController phoneController,
+    required Country country,
+  }) {
+    final String dial = country.dialCode;
+    String raw = phoneController.text.trim();
+
+    if (raw.startsWith(dial)) {
+      raw = raw.substring(dial.length).trimLeft();
+      return raw;
+    }
+
+    final String dialNoPlus = dial.startsWith('+') ? dial.substring(1) : dial;
+
+    if (raw.startsWith(dialNoPlus)) {
+      return raw.substring(dialNoPlus.length);
+    }
+
+    return raw;
   }
 
   @override
@@ -115,11 +118,10 @@ class _ProfileBodyState extends ConsumerState<ProfileBody> {
 
   @override
   Widget build(BuildContext context) {
-    ref.listen(currentCityProvider, (_, next) {
-      cityController.value = next;
-      cityTextController.text = cityController.value?.name ?? '';
-    });
-
+    log(
+      ref.watch(profileNotifierProvider).value?.value?.toJson().toString() ??
+          '',
+    );
     final Country country = ref.watch(currentCountryProvider);
 
     ref.listen(profileNotifierProvider, (prev, next) {
@@ -170,6 +172,10 @@ class _ProfileBodyState extends ConsumerState<ProfileBody> {
                           hint: 'Имя',
                           title: 'Имя',
                           controller: nameTextController,
+                          onChanged:
+                              ref
+                                  .read(profileNotifierProvider.notifier)
+                                  .onUsernameChanged,
                         ),
                       ),
                     ),
@@ -191,9 +197,18 @@ class _ProfileBodyState extends ConsumerState<ProfileBody> {
                         ),
                       ),
                     ),
-                    const SliverPadding(
-                      padding: EdgeInsets.only(bottom: 16),
-                      sliver: SliverToBoxAdapter(child: PhoneNumberSelection()),
+                    SliverPadding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      sliver: SliverToBoxAdapter(
+                        child: PhoneNumberSelection(
+                          onChanged:
+                              ref
+                                  .read(profileNotifierProvider.notifier)
+                                  .onPhoneNumberChanged,
+                          onCountryChanged: updatePhoneNumberController,
+                          textEditingController: phoneTextController,
+                        ),
+                      ),
                     ),
                     SliverPadding(
                       padding: const EdgeInsets.only(bottom: 16),
@@ -210,7 +225,6 @@ class _ProfileBodyState extends ConsumerState<ProfileBody> {
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
                   child: AppAccentButton.primary(
-                    isDisabled: isDisabled,
                     text: 'Сохранить',
                     onTapped: () {
                       ref
@@ -219,7 +233,11 @@ class _ProfileBodyState extends ConsumerState<ProfileBody> {
                             Profile(
                               urlPath: '',
                               name: nameTextController.text,
-                              phone: phoneTextController.text,
+                              countryCode: country,
+                              phone: getFormattedPhoneNumberForSave(
+                                country: country,
+                                phoneController: phoneTextController,
+                              ),
                               city: cityTextController.text,
                               userGender:
                                   ref
@@ -238,47 +256,5 @@ class _ProfileBodyState extends ConsumerState<ProfileBody> {
         );
       },
     );
-
-    //       SliverPadding(
-    //         padding: const EdgeInsets.only(bottom: 16),
-    //         sliver: SliverToBoxAdapter(
-    //           child: AppTextField(
-    //             enabled: !loadingController.value,
-    //             keyboardType: TextInputType.phone,
-    //             labelText: t.phone_field_label,
-    //             inputFormatters: switch (country) {
-    //               RU _ => [russiaFormatter],
-
-    //               KZ _ => [kazakhstanMaskFormatter],
-
-    //               BY _ => [belarusMaskFormatter],
-
-    //               AM _ => [armeniaMaskFormatter],
-
-    //               KG _ => [kyrgyzstanMaskFormatter],
-    //             },
-
-    //             hintText: switch (country) {
-    //               RU _ => '+7 (999) 999-99-99',
-
-    //               KZ _ => '+7 (999) 999-99-99',
-
-    //               BY _ => '+375 (99) 999-99-99',
-
-    //               AM _ => '+374 (99) 999-99-99',
-
-    //               KG _ => '+996 (99) 999-99-99',
-    //             },
-    //             controller: phoneTextController,
-    //             validator: (value) {
-    //               isPhoneValid.value = !(value == null || value.isEmpty);
-    //               if (!isPhoneValid.value) {
-    //                 return t.field_required_error;
-    //               }
-    //               return null;
-    //             },
-    //           ),
-    //         ),
-    //       ),
   }
 }

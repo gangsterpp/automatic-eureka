@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:VOX/domain/country.dart';
 import 'package:VOX/domain/profile.dart';
 import 'package:VOX/providers/app_storage.dart';
 import 'package:VOX/widgets/profile/gender_selection.dart';
@@ -22,10 +23,11 @@ class MockProfileService implements ProfileService {
     }
 
     /// TODO: Check;
-    return const Profile(
-      name: 'Екатерина',
-      phone: '-',
-      city: 'Москва',
+    return Profile(
+      name: '',
+      countryCode: Country.ru(),
+      phone: '',
+      city: '',
       userGender: UserGender.female,
     );
   }

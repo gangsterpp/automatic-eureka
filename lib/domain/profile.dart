@@ -1,8 +1,10 @@
+import 'package:VOX/domain/country.dart';
 import 'package:VOX/widgets/profile/gender_selection.dart';
 
 class Profile {
   final String? urlPath;
   final String? name;
+  final Country? countryCode;
   final String? phone;
   final String? city;
   final UserGender? userGender;
@@ -10,6 +12,7 @@ class Profile {
   const Profile({
     this.urlPath,
     this.name,
+    this.countryCode,
     this.phone,
     this.city,
     this.userGender,
@@ -19,6 +22,7 @@ class Profile {
     return Profile(
       urlPath: json['url_path'],
       name: json['name'],
+      countryCode: countryFromString(json['countryCode']),
       phone: json['phone'],
       city: json['city'],
       userGender: genderFromString(json['gender']),
@@ -29,6 +33,7 @@ class Profile {
     return {
       'url_path': urlPath,
       'name': name,
+      'countryCode': countryToString(countryCode),
       'phone': phone,
       'city': city,
       'gender': genderToString(userGender),
@@ -38,6 +43,7 @@ class Profile {
   Profile copyWith({
     String? urlPath,
     String? name,
+    Country? countryCode,
     String? phone,
     String? city,
     UserGender? userGender,
@@ -45,6 +51,7 @@ class Profile {
     return Profile(
       urlPath: urlPath ?? this.urlPath,
       name: name ?? this.name,
+      countryCode: countryCode ?? this.countryCode,
       phone: phone ?? this.phone,
       city: city ?? this.city,
       userGender: userGender ?? this.userGender,
@@ -72,4 +79,25 @@ String? genderToString(UserGender? gender) {
     case UserGender.male:
       return 'male';
   }
+}
+
+Country? countryFromString(String? code) {
+  switch (code) {
+    case 'RU':
+      return Country.ru();
+    case 'KZ':
+      return Country.kz();
+    case 'BY':
+      return Country.by();
+    case 'AM':
+      return Country.am();
+    case 'KG':
+      return Country.kg();
+    default:
+      return null;
+  }
+}
+
+String? countryToString(Country? country) {
+  return country?.code;
 }
